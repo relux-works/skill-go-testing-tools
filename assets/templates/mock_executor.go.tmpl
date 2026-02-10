@@ -1,0 +1,66 @@
+package cli_test
+
+// TODO: Replace "cli_test" with your actual test package name.
+// TODO: Update import paths to match your module.
+
+import (
+	"YOUR_MODULE/internal/cli" // TODO: Replace with your executor interface package
+	"github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+)
+
+// Compile-time check that MockExecutor satisfies the Executor interface.
+var _ cli.Executor = (*MockExecutor)(nil)
+
+// MockExecutor is a test double for cli.Executor.
+// It records all method calls and returns pre-configured canned responses.
+//
+// Usage in tests:
+//
+//	mock := NewMockExecutor()
+//	mock.Responses.Set("TreeJSON", []byte(`{"items":[]}`), nil)
+//	mock.Responses.Set("Show:TASK-1", []byte(`{"id":"TASK-1"}`), nil)
+//	mock.Responses.Set("Execute:list", []byte(`[...]`), nil)
+//	mock.Responses.SetError("Execute:delete", fmt.Errorf("not found"))
+//
+//	// Pass mock to your model/component, run test, then assert:
+//	tuitestkit.AssertCalled(t, &mock.MockCallRecorder, "TreeJSON")
+//	tuitestkit.AssertCalledWith(t, &mock.MockCallRecorder, "Execute", "list", []string{"--all"})
+//	tuitestkit.AssertCalledN(t, &mock.MockCallRecorder, "Show", 2)
+//	tuitestkit.AssertNotCalled(t, &mock.MockCallRecorder, "List")
+type MockExecutor struct {
+	tuitestkit.MockCallRecorder
+	Responses *tuitestkit.MockResponseMap
+}
+
+// NewMockExecutor creates a MockExecutor with an empty response map.
+func NewMockExecutor() *MockExecutor {
+	return &MockExecutor{
+		Responses: tuitestkit.NewMockResponseMap(),
+	}
+}
+
+// TreeJSON records the call and returns the canned response for key "TreeJSON".
+func (m *MockExecutor) TreeJSON() ([]byte, error) {
+	m.Record("TreeJSON")
+	return m.Responses.Get("TreeJSON")
+}
+
+// Execute records the call and returns the canned response for key "Execute:<subcmd>".
+// The response key is "Execute:" + subcmd, so you can configure different
+// responses for different subcommands.
+func (m *MockExecutor) Execute(subcmd string, args ...string) ([]byte, error) {
+	m.Record("Execute", subcmd, args)
+	return m.Responses.Get("Execute:" + subcmd)
+}
+
+// Show records the call and returns the canned response for key "Show:<id>".
+func (m *MockExecutor) Show(id string) ([]byte, error) {
+	m.Record("Show", id)
+	return m.Responses.Get("Show:" + id)
+}
+
+// List records the call and returns the canned response for key "List:<filter>".
+func (m *MockExecutor) List(filter string) ([]byte, error) {
+	m.Record("List", filter)
+	return m.Responses.Get("List:" + filter)
+}

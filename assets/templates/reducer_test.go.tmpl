@@ -1,0 +1,139 @@
+package state_test
+
+// TODO: Replace "state" with your actual package name.
+// TODO: Update the import path to match your module.
+
+import (
+	"fmt"
+	"testing"
+
+	"YOUR_MODULE/internal/state" // TODO: Replace with your state package import path
+	"github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+)
+
+// ---------------------------------------------------------------------------
+// Invariants
+// ---------------------------------------------------------------------------
+
+// Define invariants that must hold for ANY state produced by the reducer.
+// These run after every single reduce call when using WrapWithInvariants.
+
+var stateInvariants = tuitestkit.NewInvariantChecker[state.State](
+	// TODO: Add invariants relevant to your state.
+	// Each invariant checks a property that must always be true.
+	tuitestkit.Invariant[state.State]{
+		Name: "cursor in bounds",
+		Check: func(s state.State) error {
+			// TODO: Replace with your actual bounds check.
+			if s.Cursor < 0 {
+				return fmt.Errorf("cursor %d is negative", s.Cursor)
+			}
+			if len(s.Items) > 0 && s.Cursor >= len(s.Items) {
+				return fmt.Errorf("cursor %d out of bounds (len=%d)", s.Cursor, len(s.Items))
+			}
+			return nil
+		},
+	},
+	tuitestkit.Invariant[state.State]{
+		Name: "selected index valid",
+		Check: func(s state.State) error {
+			// TODO: Replace with your actual validation.
+			if s.Selected < -1 {
+				return fmt.Errorf("selected %d is invalid", s.Selected)
+			}
+			return nil
+		},
+	},
+)
+
+// ---------------------------------------------------------------------------
+// Table-driven reducer tests
+// ---------------------------------------------------------------------------
+
+func TestReducer(t *testing.T) {
+	// TODO: Replace state.Reduce with your actual reducer function.
+	// Signature must be: func(S, A) S
+	reduce := tuitestkit.WrapWithInvariants(t, state.Reduce, stateInvariants)
+
+	tests := []tuitestkit.ReducerTest[state.State, state.Action]{
+		{
+			Name:    "move cursor down",
+			Initial: state.State{Cursor: 0, Items: []string{"a", "b", "c"}},
+			Action:  state.Action{Type: state.MoveDown}, // TODO: Use your action types
+			Assert: func(t *testing.T, got state.State) {
+				if got.Cursor != 1 {
+					t.Errorf("cursor = %d, want 1", got.Cursor)
+				}
+			},
+		},
+		{
+			Name:    "move cursor up at top stays at 0",
+			Initial: state.State{Cursor: 0, Items: []string{"a", "b"}},
+			Action:  state.Action{Type: state.MoveUp}, // TODO: Use your action types
+			Assert: func(t *testing.T, got state.State) {
+				if got.Cursor != 0 {
+					t.Errorf("cursor = %d, want 0", got.Cursor)
+				}
+			},
+		},
+		{
+			Name:    "select current item",
+			Initial: state.State{Cursor: 2, Items: []string{"a", "b", "c"}, Selected: -1},
+			Action:  state.Action{Type: state.Select}, // TODO: Use your action types
+			Assert: func(t *testing.T, got state.State) {
+				if got.Selected != 2 {
+					t.Errorf("selected = %d, want 2", got.Selected)
+				}
+			},
+		},
+		// TODO: Add more test cases for each action type.
+	}
+
+	tuitestkit.RunReducerTests(t, reduce, tests)
+}
+
+// ---------------------------------------------------------------------------
+// Multi-step sequence tests
+// ---------------------------------------------------------------------------
+
+func TestReducerSequences(t *testing.T) {
+	reduce := tuitestkit.WrapWithInvariants(t, state.Reduce, stateInvariants)
+
+	sequences := []tuitestkit.ReducerSequence[state.State, state.Action]{
+		{
+			Name:    "navigate down then select",
+			Initial: state.State{Cursor: 0, Items: []string{"a", "b", "c"}, Selected: -1},
+			Steps: []tuitestkit.Step[state.State, state.Action]{
+				{
+					Name:   "move down twice",
+					Action: state.Action{Type: state.MoveDown},
+					Assert: func(t *testing.T, got state.State) {
+						if got.Cursor != 1 {
+							t.Errorf("after first down: cursor = %d, want 1", got.Cursor)
+						}
+					},
+				},
+				{
+					Name:   "move down again",
+					Action: state.Action{Type: state.MoveDown},
+					// Assert is optional per step; nil means skip step assertion
+				},
+				{
+					Name:   "select",
+					Action: state.Action{Type: state.Select},
+				},
+			},
+			Final: func(t *testing.T, got state.State) {
+				if got.Cursor != 2 {
+					t.Errorf("final cursor = %d, want 2", got.Cursor)
+				}
+				if got.Selected != 2 {
+					t.Errorf("final selected = %d, want 2", got.Selected)
+				}
+			},
+		},
+		// TODO: Add more sequences testing complex multi-step workflows.
+	}
+
+	tuitestkit.RunReducerSequences(t, reduce, sequences)
+}

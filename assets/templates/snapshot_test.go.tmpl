@@ -1,0 +1,125 @@
+package board_test
+
+// TODO: Replace "board" with your actual package name.
+// TODO: Update import paths to match your module.
+//
+// Snapshot tests compare model.View() output against golden files stored in:
+//   testdata/snapshots/<name>.golden
+//
+// To create or update golden files, run:
+//   UPDATE_SNAPSHOTS=1 go test ./...
+//
+// Golden files are committed to git so regressions are caught in CI.
+
+import (
+	"testing"
+
+	"YOUR_MODULE/internal/ui/screens/board" // TODO: Replace with your component package
+	"github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+)
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+// newSnapshotModel creates a model with deterministic data for snapshot testing.
+// TODO: Replace with your model's constructor. Use fixed/hardcoded test data
+// so snapshots are reproducible across runs.
+func newSnapshotModel() board.Model {
+	m := board.New( /* TODO: pass deterministic test dependencies */ )
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(80, 24))
+	return m
+}
+
+// ---------------------------------------------------------------------------
+// View snapshots (ANSI stripped)
+// ---------------------------------------------------------------------------
+
+func TestSnapshotInitialView(t *testing.T) {
+	m := newSnapshotModel()
+	// Compares stripped view against testdata/snapshots/initial-view.golden
+	tuitestkit.SnapshotView(t, m, "initial-view")
+}
+
+func TestSnapshotAfterNavigation(t *testing.T) {
+	m := newSnapshotModel()
+	m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("down"))
+	tuitestkit.SnapshotView(t, m, "after-navigation")
+}
+
+func TestSnapshotWithSelection(t *testing.T) {
+	m := newSnapshotModel()
+	m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("enter"))
+	tuitestkit.SnapshotView(t, m, "with-selection")
+}
+
+// ---------------------------------------------------------------------------
+// Raw view snapshots (with ANSI codes)
+// ---------------------------------------------------------------------------
+// Use SnapshotViewRaw when you want to test that colors/styles are correct.
+// The golden file will contain raw ANSI escape sequences.
+
+func TestSnapshotRawInitialView(t *testing.T) {
+	m := newSnapshotModel()
+	tuitestkit.SnapshotViewRaw(t, m, "raw-initial-view")
+}
+
+// ---------------------------------------------------------------------------
+// String-based snapshots
+// ---------------------------------------------------------------------------
+// Use SnapshotStr when you have a pre-rendered string instead of a tea.Model.
+
+func TestSnapshotCustomString(t *testing.T) {
+	m := newSnapshotModel()
+	// Render only part of the view, or compute a custom string.
+	view := m.View()
+	// TODO: Optionally transform the view before snapshotting.
+	tuitestkit.SnapshotStr(t, view, "custom-string")
+}
+
+// ---------------------------------------------------------------------------
+// Different window sizes
+// ---------------------------------------------------------------------------
+
+func TestSnapshotSmallTerminal(t *testing.T) {
+	m := newSnapshotModel()
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(40, 10))
+	tuitestkit.SnapshotView(t, m, "small-terminal")
+}
+
+func TestSnapshotWideTerminal(t *testing.T) {
+	m := newSnapshotModel()
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(200, 50))
+	tuitestkit.SnapshotView(t, m, "wide-terminal")
+}
+
+// ---------------------------------------------------------------------------
+// Snapshot after complex interactions
+// ---------------------------------------------------------------------------
+
+func TestSnapshotAfterSearch(t *testing.T) {
+	m := newSnapshotModel()
+
+	// TODO: Replace with your actual search flow.
+	m = tuitestkit.Send(m, tuitestkit.Key("/"))
+	m = tuitestkit.Send(m,
+		tuitestkit.Key("t"),
+		tuitestkit.Key("e"),
+		tuitestkit.Key("s"),
+		tuitestkit.Key("t"),
+	)
+	m = tuitestkit.Send(m, tuitestkit.Key("enter"))
+
+	tuitestkit.SnapshotView(t, m, "after-search")
+}
+
+func TestSnapshotWithCommandResults(t *testing.T) {
+	m := newSnapshotModel()
+
+	// Trigger a command, execute it, feed results back.
+	m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("enter"))
+	msgs := tuitestkit.ExecCmds(cmds...)
+	m = tuitestkit.Send(m, msgs...)
+
+	tuitestkit.SnapshotView(t, m, "with-command-results")
+}
