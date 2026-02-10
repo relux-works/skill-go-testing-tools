@@ -1,0 +1,69 @@
+package cli
+
+// TODO: Replace "cli" with your actual package name.
+// TODO: Customize the interface methods to match your CLI tool's commands.
+
+// Executor defines the interface for CLI command execution.
+// The TUI depends on this interface, not on a concrete implementation.
+// Tests inject a mock; production code injects the real executor.
+type Executor interface {
+	// TreeJSON returns the board/project tree as JSON bytes.
+	// TODO: Replace with your actual data-fetching methods.
+	TreeJSON() ([]byte, error)
+
+	// Execute runs a CLI command with the given arguments and returns output.
+	// TODO: Customize args pattern to match your CLI. Common patterns:
+	//   - Execute(subcmd string, args ...string) ([]byte, error)
+	//   - Execute(args []string) ([]byte, error)
+	Execute(subcmd string, args ...string) ([]byte, error)
+
+	// Show returns detailed information about a single element by ID.
+	// TODO: Replace with your actual detail-fetching method.
+	Show(id string) ([]byte, error)
+
+	// List returns a filtered list of elements.
+	// TODO: Replace with your actual listing method.
+	List(filter string) ([]byte, error)
+}
+
+// RealExecutor implements Executor by shelling out to the actual CLI binary.
+// TODO: Implement this for production use.
+type RealExecutor struct {
+	// BinaryPath is the path to the CLI binary.
+	BinaryPath string
+	// BoardDir is the --board-dir flag value (if applicable).
+	BoardDir string
+}
+
+// TreeJSON shells out to the CLI to get the tree as JSON.
+// TODO: Implement with os/exec.
+func (e *RealExecutor) TreeJSON() ([]byte, error) {
+	// TODO: Implement. Example:
+	//   cmd := exec.Command(e.BinaryPath, "--board-dir", e.BoardDir, "tree", "--json")
+	//   return cmd.Output()
+	panic("TODO: implement RealExecutor.TreeJSON")
+}
+
+// Execute runs a CLI subcommand.
+// TODO: Implement with os/exec.
+func (e *RealExecutor) Execute(subcmd string, args ...string) ([]byte, error) {
+	// TODO: Implement. Example:
+	//   fullArgs := append([]string{"--board-dir", e.BoardDir, subcmd}, args...)
+	//   cmd := exec.Command(e.BinaryPath, fullArgs...)
+	//   return cmd.Output()
+	panic("TODO: implement RealExecutor.Execute")
+}
+
+// Show returns detailed info about an element.
+// TODO: Implement with os/exec.
+func (e *RealExecutor) Show(id string) ([]byte, error) {
+	// TODO: Implement.
+	panic("TODO: implement RealExecutor.Show")
+}
+
+// List returns a filtered list.
+// TODO: Implement with os/exec.
+func (e *RealExecutor) List(filter string) ([]byte, error) {
+	// TODO: Implement.
+	panic("TODO: implement RealExecutor.List")
+}

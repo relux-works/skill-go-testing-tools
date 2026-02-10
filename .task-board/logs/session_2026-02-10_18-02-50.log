@@ -1,0 +1,20 @@
+=====================================
+=== SESSION START: 2026-02-10_18-02-50 ===
+Time: 2026-02-10T18:02:50+03:00
+Working dir: /Users/aagrigore1/src/skill-go-tui-testing-tools
+=====================================
+
+[18:02:50.132] [INFO] task-board-tui version dev
+[18:02:50.133] [INFO] Config loaded, refresh interval: 10s
+[18:04:36.972] [INFO] [ACTION] command_palette: opened
+[18:04:38.334] [DEBUG] [KEY] down
+[18:04:38.827] [DEBUG] [KEY] enter
+[18:04:38.828] [INFO] command.ExecuteMsg received: cmd="agents" args=""
+[18:04:38.828] [INFO] executeCommand: cmd="agents" args=""
+[18:04:38.828] [INFO] [CMD] /agents → opening agents screen
+[23:28:34.514] [INFO] Saving config and closing session
+
+=== SESSION END ===
+Duration: 5h25m44s
+Total actions: 9
+=====================================

@@ -1,0 +1,190 @@
+package board_test
+
+// TODO: Replace "board" with your actual package name.
+// TODO: Update import paths to match your module.
+
+import (
+	"testing"
+
+	tea "github.com/charmbracelet/bubbletea"
+
+	"YOUR_MODULE/internal/ui/screens/board" // TODO: Replace with your component package
+	"github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+)
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+// newTestModel creates a model configured for testing.
+// TODO: Replace with your model's constructor and test data.
+func newTestModel() board.Model {
+	m := board.New( /* TODO: pass test dependencies */ )
+	// Initialize with a window size (most components need this).
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(120, 40))
+	return m
+}
+
+// ---------------------------------------------------------------------------
+// Initialization
+// ---------------------------------------------------------------------------
+
+func TestInitialView(t *testing.T) {
+	m := newTestModel()
+
+	// TODO: Check that the initial view contains expected elements.
+	tuitestkit.ViewContains(t, m, "Expected Header")
+	tuitestkit.ViewNotContains(t, m, "Should Not Appear Yet")
+}
+
+// ---------------------------------------------------------------------------
+// Keyboard navigation
+// ---------------------------------------------------------------------------
+
+func TestKeyboardNavigation(t *testing.T) {
+	m := newTestModel()
+
+	// Navigate down with arrow key
+	m = tuitestkit.Send(m, tuitestkit.Key("down"))
+	tuitestkit.ViewContains(t, m, "second item") // TODO: Replace with actual content
+
+	// Navigate further
+	m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("down"))
+	// TODO: Assert expected state after navigation
+
+	// Go back up
+	m = tuitestkit.Send(m, tuitestkit.Key("up"))
+	// TODO: Assert
+}
+
+func TestKeyboardShortcuts(t *testing.T) {
+	m := newTestModel()
+
+	// TODO: Test your keyboard shortcuts.
+	// Example: press "/" to open search, "q" to quit, etc.
+
+	// Open search with "/"
+	m = tuitestkit.Send(m, tuitestkit.Key("/"))
+	tuitestkit.ViewContains(t, m, "Search")
+
+	// Type a query
+	m = tuitestkit.Send(m, tuitestkit.Key("h"), tuitestkit.Key("e"), tuitestkit.Key("l"), tuitestkit.Key("l"), tuitestkit.Key("o"))
+	tuitestkit.ViewContains(t, m, "hello")
+
+	// Confirm with enter
+	m = tuitestkit.Send(m, tuitestkit.Key("enter"))
+	// TODO: Assert filtered results
+}
+
+// ---------------------------------------------------------------------------
+// Commands and side effects
+// ---------------------------------------------------------------------------
+
+func TestCommandExecution(t *testing.T) {
+	m := newTestModel()
+
+	// Use SendAndCollect to capture commands returned by Update.
+	m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("enter"))
+
+	// Execute the commands synchronously to get resulting messages.
+	msgs := tuitestkit.ExecCmds(cmds...)
+
+	// Feed the resulting messages back into the model.
+	m = tuitestkit.Send(m, msgs...)
+
+	// TODO: Assert the model state after command execution.
+	tuitestkit.ViewContains(t, m, "Expected Result")
+}
+
+// ---------------------------------------------------------------------------
+// Window resize
+// ---------------------------------------------------------------------------
+
+func TestWindowResize(t *testing.T) {
+	m := newTestModel()
+
+	// Resize to a small terminal
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(40, 10))
+	// TODO: Assert compact layout or truncation
+
+	// Resize to a large terminal
+	m = tuitestkit.Send(m, tuitestkit.WindowSize(200, 60))
+	// TODO: Assert expanded layout
+}
+
+// ---------------------------------------------------------------------------
+// Mouse events
+// ---------------------------------------------------------------------------
+
+func TestMouseClick(t *testing.T) {
+	m := newTestModel()
+
+	// Click on a specific position
+	m = tuitestkit.Send(m, tuitestkit.MouseClick(10, 5))
+	// TODO: Assert the click result (e.g., item selected, button pressed)
+
+	// Right-click
+	m = tuitestkit.Send(m, tuitestkit.MouseClickRight(10, 5))
+	// TODO: Assert context menu or right-click behavior
+
+	// Mouse release
+	m = tuitestkit.Send(m, tuitestkit.MouseRelease(10, 5))
+}
+
+func TestMouseScroll(t *testing.T) {
+	m := newTestModel()
+
+	// Scroll down
+	m = tuitestkit.Send(m, tuitestkit.MouseScroll(tuitestkit.ScrollDown))
+	// TODO: Assert scroll position changed
+
+	// Scroll up
+	m = tuitestkit.Send(m, tuitestkit.MouseScroll(tuitestkit.ScrollUp))
+	// TODO: Assert scroll returned
+}
+
+// ---------------------------------------------------------------------------
+// View line assertions
+// ---------------------------------------------------------------------------
+
+func TestViewLines(t *testing.T) {
+	m := newTestModel()
+
+	// Check specific lines by index.
+	tuitestkit.ViewLineContains(t, m, 0, "Header") // TODO: Replace with actual header text
+
+	// Check exact line content.
+	tuitestkit.ViewLineEquals(t, m, 0, "Exact Header Text") // TODO: Replace
+
+	// Get all lines for custom assertions.
+	lines := tuitestkit.ViewLines(m)
+	if len(lines) < 3 {
+		t.Fatalf("expected at least 3 lines, got %d", len(lines))
+	}
+
+	// Use regex matching on the full view.
+	tuitestkit.ViewMatchesRegex(t, m, `Items: \d+`)
+}
+
+// ---------------------------------------------------------------------------
+// Quit behavior
+// ---------------------------------------------------------------------------
+
+func TestQuitCommand(t *testing.T) {
+	m := newTestModel()
+
+	m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("q"))
+	msgs := tuitestkit.ExecCmds(cmds...)
+
+	// Check that a quit message was produced.
+	foundQuit := false
+	for _, msg := range msgs {
+		if _, ok := msg.(tea.QuitMsg); ok {
+			foundQuit = true
+			break
+		}
+	}
+	if !foundQuit {
+		t.Error("expected tea.QuitMsg after pressing 'q'")
+	}
+}
