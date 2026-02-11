@@ -20,7 +20,7 @@ Core philosophy: **Elm architecture makes TUI testable.** The reducer is a pure 
 Install the library in your project:
 
 ```bash
-go get github.com/aagrigore1/skill-go-testing-tools/tuitestkit
+go get github.com/ivalx1s/skill-go-testing-tools/tuitestkit
 ```
 
 ---
@@ -35,7 +35,7 @@ package myscreen_test
 import (
     "testing"
 
-    "github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+    "github.com/ivalx1s/skill-go-testing-tools/tuitestkit"
 )
 
 func TestBasicNavigation(t *testing.T) {

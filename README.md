@@ -6,7 +6,7 @@ Agent skill + Go library for testing bubbletea TUI applications. Enables a **clo
 
 ### `tuitestkit/` — Go Library
 
-Test utilities as a Go module (`github.com/aagrigore1/skill-go-testing-tools/tuitestkit`):
+Test utilities as a Go module (`github.com/ivalx1s/skill-go-testing-tools/tuitestkit`):
 
 | File | What |
 |------|------|
@@ -51,7 +51,7 @@ Test utilities as a Go module (`github.com/aagrigore1/skill-go-testing-tools/tui
 ```go
 import (
     "testing"
-    kit "github.com/aagrigore1/skill-go-testing-tools/tuitestkit"
+    kit "github.com/ivalx1s/skill-go-testing-tools/tuitestkit"
 )
 
 func TestMyScreen(t *testing.T) {
