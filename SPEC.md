@@ -50,7 +50,7 @@ Complete agent guide covering:
 
 ### R2: Go Library (`tuitestkit`)
 
-Go module at `github.com/ivalx1s/skill-go-testing-tools/tuitestkit` (or similar):
+Go module at `github.com/relux-works/skill-go-testing-tools/tuitestkit` (or similar):
 
 #### R2.1: Message Builders
 - `Key(k string) tea.KeyMsg` — build key messages (`Key("enter")`, `Key("ctrl+c")`)

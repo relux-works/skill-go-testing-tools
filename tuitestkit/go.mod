@@ -1,4 +1,4 @@
-module github.com/ivalx1s/skill-go-testing-tools/tuitestkit
+module github.com/relux-works/skill-go-testing-tools/tuitestkit
 
 go 1.25.5
 
