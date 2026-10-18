@@ -35,12 +35,12 @@ echo ""
 # --- Git ---
 check "git" \
     "command -v git" \
-    "Install git: https://git-scm.com/downloads"
+    "Install git: brew install git (or your system package manager)"
 
 # --- Go installed ---
 check "Go installed" \
     "command -v go" \
-    "Install Go: brew install go (or https://go.dev/dl/)"
+    "Install Go: brew install go (or the official Go installer)"
 
 # --- Go version >= 1.21 ---
 if command -v go &>/dev/null; then
